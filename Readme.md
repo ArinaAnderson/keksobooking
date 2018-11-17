@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Зинченко Марина](https://up.htmlacademy.ru/javascript/16/user/243875).
-* Наставник: `Неизвестно`.
+* Наставник: `Кексик`.
 
 ---
 
