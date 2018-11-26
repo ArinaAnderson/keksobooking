@@ -92,7 +92,8 @@ function shuffleArray(list) {
 
 function defineGuestEnding(guests) {
   var guestsNum = guests.toString();
-  if (guestsNum[guestsNum.length - 1] === '1' && guestsNum[guestsNum.length - 1] !== '11') {
+  if (guestsNum[guestsNum.length - 1] === '1' &&
+      guestsNum.substring(guestsNum.length - 2, guestsNum.length) !== '11') {
     return 'гостя';
   }
   return 'гостей';
@@ -100,11 +101,12 @@ function defineGuestEnding(guests) {
 
 function defineRoomEnding(rooms) {
   var roomsNum = rooms.toString();
-  if (roomsNum[roomsNum.length - 1] === '1' && roomsNum[roomsNum.length - 1] !== '11') {
+  if (roomsNum[roomsNum.length - 1] === '1' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '11') {
     return 'комната';
   }
-  if (roomsNum[roomsNum.length - 1] === '2' || roomsNum[roomsNum.length - 1] === '3' ||
-      roomsNum[roomsNum.length - 1] === '4') {
+  if (roomsNum[roomsNum.length - 1] === '2' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '12' ||
+      roomsNum[roomsNum.length - 1] === '3' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '13'||
+      roomsNum[roomsNum.length - 1] === '4' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '14') {
     return 'комнаты';
   }
   return 'комнат';
