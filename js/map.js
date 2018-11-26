@@ -92,26 +92,22 @@ function shuffleArray(list) {
 
 function defineGuestEnding(guests) {
   var guestsNum = guests.toString();
-
-  return guestsNum[guestsNum.length - 1] === '1' ? 'гостя' : 'гостей';
+  if (guestsNum[guestsNum.length - 1] === '1' && guestsNum[guestsNum.length - 1] !== '11') {
+    return 'гостя';
+  }
+  return 'гостей';
 }
 
 function defineRoomEnding(rooms) {
   var roomsNum = rooms.toString();
-  var roomWord;
-  /*switch (roomsNum[roomsNum.length - 1]) {
-    case '1':
-      roomWord = 'комната';
-      break;
-    case '2' || '3' || '4':
-      roomWord = 'комнаты';
-      break;
-    default:
-      roomWord = 'комнат';
-  }*/
-  roomWord = roomsNum[roomsNum.length - 1] === '1' ? 'комната' : (roomsNum[roomsNum.length - 1] === '2' ||
-    roomsNum[roomsNum.length - 1] === '3' || roomsNum[roomsNum.length - 1] === '4') ? 'комнаты' :'комнат';
-  return roomWord;
+  if (roomsNum[roomsNum.length - 1] === '1' && roomsNum[roomsNum.length - 1] !== '11') {
+    return 'комната';
+  }
+  if (roomsNum[roomsNum.length - 1] === '2' || roomsNum[roomsNum.length - 1] === '3' ||
+      roomsNum[roomsNum.length - 1] === '4') {
+    return 'комнаты';
+  }
+  return 'комнат';
 }
 
 function createOfferData(num) {
