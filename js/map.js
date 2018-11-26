@@ -1,5 +1,5 @@
 'use strict';
- var OFFERS_NUMBER = 8;
+var OFFERS_NUMBER = 8;
 var OFFER_TITILES = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
@@ -49,17 +49,17 @@ var mapFilters = document.querySelector('.map__filters-container');
 
 function activateMap() {
   map.classList.remove('map--faded');
-};
+}
 
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
- function getImageAddress(varPart) {
+function getImageAddress(varPart) {
   var constPartNumber = varPart < 10 ? '0' : '';
 
   return 'img/avatars/user' + constPartNumber + varPart + '.png';
 }
- // создание нового элемента изображения
+// создание нового элемента изображения
 function addNewImage(src) {
   var image = document.createElement('img');
   image.src = src;
@@ -70,7 +70,7 @@ function addNewImage(src) {
 
   return image;
 }
- // создание нового элемента нового пункта списка
+// создание нового элемента нового пункта списка
 function addListItem(elemClass, modifier) {
   var li = document.createElement('li');
   li.classList.add(elemClass);
@@ -98,8 +98,8 @@ function defineGuestEnding(guests) {
 
 function defineRoomEnding(rooms) {
   var roomsNum = rooms.toString();
-
-  return roomsNum[roomsNum.length - 1] === '1' ? 'комната' : (roomsNum[roomsNum.length - 1] === '2' ||
+  var roomWord;
+  return roomWord = roomsNum[roomsNum.length - 1] === '1' ? 'комната' : (roomsNum[roomsNum.length - 1] === '2' ||
     roomsNum[roomsNum.length - 1] === '3' || roomsNum[roomsNum.length - 1] === '4') ? 'комнаты' :'комнат';
 }
 
