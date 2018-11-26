@@ -99,8 +99,19 @@ function defineGuestEnding(guests) {
 function defineRoomEnding(rooms) {
   var roomsNum = rooms.toString();
   var roomWord;
-  return roomWord = roomsNum[roomsNum.length - 1] === '1' ? 'комната' : (roomsNum[roomsNum.length - 1] === '2' ||
+  /*switch (roomsNum[roomsNum.length - 1]) {
+    case '1':
+      roomWord = 'комната';
+      break;
+    case '2' || '3' || '4':
+      roomWord = 'комнаты';
+      break;
+    default:
+      roomWord = 'комнат';
+  }*/
+  roomWord = roomsNum[roomsNum.length - 1] === '1' ? 'комната' : (roomsNum[roomsNum.length - 1] === '2' ||
     roomsNum[roomsNum.length - 1] === '3' || roomsNum[roomsNum.length - 1] === '4') ? 'комнаты' :'комнат';
+  return roomWord;
 }
 
 function createOfferData(num) {
