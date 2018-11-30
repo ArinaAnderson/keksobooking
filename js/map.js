@@ -310,7 +310,7 @@ mainPin.addEventListener('mouseup', function () {
     /* fillAddressInput(evt.pageX, evt.pageY, locationParams.MAIN_PIN_WIDTH / 2,
         locationParams.MAIN_PIN_HEIGHT);*/
     fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
-      Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight));
+        Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight));
   }
   isPageActivated = false;
 });
