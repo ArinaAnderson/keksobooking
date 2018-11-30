@@ -196,7 +196,7 @@ function renderCard(offerData) {
 function createOffersList(number) {
   var offersArray = [];
   for (var i = 0; i < number; i++) {
-     offersArray.push(createOfferData(i));
+    offersArray.push(createOfferData(i));
   }
   return offersArray;
 }
@@ -293,24 +293,24 @@ function deactivatePage() {
   offers = createOffersList(OFFERS_NUMBER);
   deactivateForms();
   setupMainPin(locationParams.MAIN_PIN_X, locationParams.MAIN_PIN_Y);
-  /*fillAddressInput(parseInt(mainPin.style.left, 10) + 0.5 * locationParams.MAIN_PIN_WIDTH,
+  /* fillAddressInput(parseInt(mainPin.style.left, 10) + 0.5 * locationParams.MAIN_PIN_WIDTH,
       parseInt(mainPin.style.top, 10) + 0.5 * locationParams.MAIN_PIN_HEIGHT);*/
   fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * parseInt(mainPin.offsetWidth, 10)),
-    Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * parseInt(mainPin.offsetHeight, 10)));
+      Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * parseInt(mainPin.offsetHeight, 10)));
   deletePins();
   removeCard();
 }
 
 deactivatePage();
 
-mainPin.addEventListener('mouseup', function (evt) {
+mainPin.addEventListener('mouseup', function () {
   if (isPageActivated) {
     activateForms();
     renderPins(offers);
     /* fillAddressInput(evt.pageX, evt.pageY, locationParams.MAIN_PIN_WIDTH / 2,
         locationParams.MAIN_PIN_HEIGHT);*/
     fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
-    Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight));
+      Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight));
   }
   isPageActivated = false;
 });
