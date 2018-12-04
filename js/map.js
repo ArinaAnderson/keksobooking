@@ -31,7 +31,9 @@ var locationParams = {
   MIN_LOCATION_Y: 130,
   MAX_LOCATION_Y: 630,
   MIN_LOCATION_X: 0,
-  MAX_LOCATION_X: 1200
+  MAX_LOCATION_X: 1200,
+  INITIAL_LEFT_POS: 570,
+  INITIAL_TOP_POS: 375
 };
 
 var offerTypeListMap = {
@@ -54,6 +56,72 @@ var isPageActivated;
 var offers;
 var activePin;
 var activeCard;
+
+function onEscPress(evt, callback) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    callback();
+  }
+}
+
+// typeSelect <--> priceinput
+var offerTypePriceListMap = {
+  'bungalo': 0,
+  'flat': 1000,
+  'house': 5000,
+  'palace': 10000
+};
+var priceInput = document.querySelector('input[name="price"]');
+var typeSelect = document.querySelector('select[name="type"]');
+function setPriceMin() {
+  var typeValue = typeSelect.value;
+  priceInput.min = offerTypePriceListMap[typeValue];
+  priceInput.placeholder = offerTypePriceListMap[typeValue];
+}
+function typeSelectHandler() {
+  setPriceMin();
+}
+
+// установка соответствия времени заезда и выезда
+var checkinSelect = document.querySelector('select[name="timein"]');
+var checkoutSelect = document.querySelector('select[name="timeout"]');
+function validateCheckout() {
+  if (checkoutSelect.value !== checkinSelect.value) {
+    checkoutSelect.setCustomValidity('Время выезда должно быть ' + checkinSelect.value);
+  } else {
+    checkoutSelect.setCustomValidity('');
+  }
+}
+function timeSelectHandler() {
+  validateCheckout();
+}
+
+// гости - количество комнат:
+var roomsSelect = document.querySelector('select[name="rooms"]');
+var guestsSelect = document.querySelector('select[name="capacity"]');
+var roomsGuestsListMap = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+};
+function getErrorText() {
+  var errorText = [];
+  for (var i = 0; i < roomsGuestsListMap[roomsSelect.value].length; i++) {
+    errorText.push(guestsSelect.querySelector('option[value="' + roomsGuestsListMap[roomsSelect.value][i] + '"]').textContent);
+  }
+
+  return errorText;
+}
+function validateGuestNum() {
+  if (roomsGuestsListMap[roomsSelect.value].indexOf(guestsSelect.value) < 0) {
+    guestsSelect.setCustomValidity('Такое количество комнат предусмотрено ' + getErrorText().join(', или '));
+  } else {
+    guestsSelect.setCustomValidity('');
+  }
+}
+function guestNumSelectHandler() {
+  validateGuestNum();
+}
 
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -232,10 +300,10 @@ function addCard(offerData) {
 }
 
 function cardEscPressHandler(evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
+  onEscPress(evt, function () {
     removeCard();
     deactivatePin();
-  }
+  });
 }
 
 function removeCard() {
@@ -271,13 +339,21 @@ function deactivateForms() {
   offerForm.classList.add('ad-form--disabled');
 }
 
+function validateForms() {
+  typeSelect.addEventListener('change', typeSelectHandler);
+  checkinSelect.addEventListener('change', timeSelectHandler);
+  checkoutSelect.addEventListener('change', timeSelectHandler);
+  roomsSelect.addEventListener('change', guestNumSelectHandler);
+  guestsSelect.addEventListener('change', guestNumSelectHandler);
+}
+
 function fillAddressField(x, y) {
   addressInput.value = x + ', ' + y;
 }
 
 function setupMainPin(x, y) {
-  mainPin.style.left = x;
-  mainPin.style.top = y;
+  mainPin.style.left = x + 'px';
+  mainPin.style.top = y + 'px';
 }
 
 function deletePins() {
@@ -292,9 +368,7 @@ function deactivatePage() {
   isPageActivated = true;
   offers = createOffersList(OFFERS_NUMBER);
   deactivateForms();
-  setupMainPin(locationParams.MAIN_PIN_X, locationParams.MAIN_PIN_Y);
-  /* fillAddressInput(parseInt(mainPin.style.left, 10) + 0.5 * locationParams.MAIN_PIN_WIDTH,
-      parseInt(mainPin.style.top, 10) + 0.5 * locationParams.MAIN_PIN_HEIGHT);*/
+  setupMainPin(locationParams.INITIAL_LEFT_POS, locationParams.INITIAL_TOP_POS);
   fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * parseInt(mainPin.offsetWidth, 10)),
       Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * parseInt(mainPin.offsetHeight, 10)));
   deletePins();
@@ -306,9 +380,8 @@ deactivatePage();
 mainPin.addEventListener('mouseup', function () {
   if (isPageActivated) {
     activateForms();
+    validateForms();
     renderPins(offers);
-    /* fillAddressInput(evt.pageX, evt.pageY, locationParams.MAIN_PIN_WIDTH / 2,
-        locationParams.MAIN_PIN_HEIGHT);*/
     fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
         Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight));
   }
