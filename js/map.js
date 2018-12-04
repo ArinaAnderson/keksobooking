@@ -69,7 +69,7 @@ var offerTypePriceListMap = {
   'flat': 1000,
   'house': 5000,
   'palace': 10000
-}
+};
 var priceInput = document.querySelector('input[name="price"]');
 var typeSelect = document.querySelector('select[name="type"]');
 function setPriceMin() {
