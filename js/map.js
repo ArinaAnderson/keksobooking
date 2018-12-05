@@ -369,21 +369,65 @@ function deactivatePage() {
   offers = createOffersList(OFFERS_NUMBER);
   deactivateForms();
   setupMainPin(locationParams.INITIAL_LEFT_POS, locationParams.INITIAL_TOP_POS);
-  fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * parseInt(mainPin.offsetWidth, 10)),
-      Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * parseInt(mainPin.offsetHeight, 10)));
+  fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
+      Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight, 10));
   deletePins();
   removeCard();
 }
 
-deactivatePage();
+function validateCoord(coord, minValue, maxValue) {
+  coord = coord < minValue ? minValue : coord;
+  coord = coord > maxValue ? maxValue : coord;
 
-mainPin.addEventListener('mouseup', function () {
-  if (isPageActivated) {
-    activateForms();
-    validateForms();
-    renderPins(offers);
-    fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
-        Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight));
+  return coord;
+}
+
+function mainPinMouseDownHandler(evt) {
+  evt.preventDefault();
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  function mainPinMouseMoveHandler(moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    var validatedX = validateCoord(mainPin.offsetLeft - shift.x, locationParams.MIN_LOCATION_X - 0.5 * mainPin.offsetWidth,
+        locationParams.MAX_LOCATION_X - 0.5 * mainPin.offsetWidth);
+    var validatedY = validateCoord(mainPin.offsetTop - shift.y, locationParams.MIN_LOCATION_Y - mainPin.offsetHeight,
+        locationParams.MAX_LOCATION_Y - mainPin.offsetHeight);
+    setupMainPin(validatedX, validatedY);
+
+    fillAddressField(Math.round(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
+        Math.round(parseInt(mainPin.style.top, 10) + mainPin.offsetHeight));
   }
-  isPageActivated = false;
-});
+
+  function mainPinMouseUpHandler(upEvt) {
+    upEvt.preventDefault();
+    if (isPageActivated) {
+      activateForms();
+      validateForms();
+      renderPins(offers);
+    }
+
+    document.removeEventListener('mousemove', mainPinMouseMoveHandler);
+    isPageActivated = false;
+  }
+
+  document.addEventListener('mousemove', mainPinMouseMoveHandler);
+  document.addEventListener('mouseup', mainPinMouseUpHandler);
+}
+
+deactivatePage();
+mainPin.addEventListener('mousedown', mainPinMouseDownHandler);
