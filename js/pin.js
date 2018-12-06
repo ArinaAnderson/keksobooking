@@ -1,7 +1,6 @@
 'use strict';
 (function () {
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-  var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var activePin;
@@ -42,7 +41,7 @@
     },
     delete: function () {
       var nextPin = mainPin.nextElementSibling;
-      while(nextPin) {
+      while (nextPin) {
         nextPin.parentElement.removeChild(nextPin);
         nextPin = mainPin.nextElementSibling;
       }

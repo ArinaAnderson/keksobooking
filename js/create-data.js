@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var OFFERS_NUMBER = 8;
   var OFFER_TITILES = [
     'Большая уютная квартира',
     'Маленькая неуютная квартира',
@@ -37,14 +36,6 @@
     INITIAL_TOP_POS: 375
   };
 
-  var offerTypeListMap = {
-    'flat': 'Квартира',
-    'palace': 'Дворец',
-    'bungalo': 'Бунгало',
-    'house': 'Дом'
-  };
-
-  var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
   function getImageAddress(varPart) {
