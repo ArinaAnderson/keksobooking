@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var OFFERS_NUMBER = 8;
   var locationParams = {
     MIN_LOCATION_Y: 130,
     MAX_LOCATION_Y: 630,
@@ -13,18 +12,6 @@
 
   var mainPin = document.querySelector('.map__pin--main');
   var isPageActivated;
-  var offers;
-
-  function deactivatePage() {
-    isPageActivated = true;
-    offers = window.createData(OFFERS_NUMBER);
-    window.form.deactivate();
-    window.utils.setupStyleLeftTop(mainPin, locationParams.INITIAL_LEFT_POS, locationParams.INITIAL_TOP_POS);
-    window.form.fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
-        Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight, 10));
-    window.pin.delete();
-    window.card.remove();
-  }
 
   function validateCoord(coord, minValue, maxValue) {
     coord = coord < minValue ? minValue : coord;
@@ -68,18 +55,31 @@
       upEvt.preventDefault();
       if (isPageActivated) {
         window.form.activate();
-        window.form.validate();
-        window.pin.render(offers);
+        window.backend.load(window.pin.render, window.notifications.notifyOfError);
+        isPageActivated = false;
       }
 
       document.removeEventListener('mousemove', mainPinMouseMoveHandler);
-      isPageActivated = false;
+      document.removeEventListener('mouseup', mainPinMouseUpHandler);// ??
+      // isPageActivated = false;
     }
 
     document.addEventListener('mousemove', mainPinMouseMoveHandler);
     document.addEventListener('mouseup', mainPinMouseUpHandler);
   }
 
-  deactivatePage();
+  window.main = {
+    deactivate: function () {
+      isPageActivated = true;
+      window.form.deactivate();
+      window.utils.setupStyleLeftTop(mainPin, locationParams.INITIAL_LEFT_POS, locationParams.INITIAL_TOP_POS);
+      window.form.fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
+          Math.floor(parseInt(mainPin.style.top, 10) + 0.5 * mainPin.offsetHeight, 10));
+      window.pin.delete();
+      window.card.remove();
+    }
+  };
+
+  window.main.deactivate();
   mainPin.addEventListener('mousedown', mainPinMouseDownHandler);
 })();
