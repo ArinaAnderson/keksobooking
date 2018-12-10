@@ -28,6 +28,11 @@
       for (var i = 0; i < elementList.length; i++) {
         elementList[i].disabled = disable;
       }
+    },
+    toggleCheckedAttr: function (elementList, checked) {
+      for (var i = 0; i < elementList.length; i++) {
+        elementList[i].checked = checked;
+      }
     }
   };
 })();
