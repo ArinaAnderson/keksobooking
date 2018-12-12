@@ -1,8 +1,6 @@
 'use strict';
 (function () {
   var SUCCESS_RESP_STATUS = 200;
-  var URL_GET = 'https://js.dump.academy/keksobooking/data';
-  var URL_POST = 'https://js.dump.academy/keksobooking';
 
   function createXhrRequest(onLoad, onError, badStatusText) {
     var xhr = new XMLHttpRequest();
@@ -21,16 +19,16 @@
   }
 
   window.backend = {
-    save: function (data, onLoad, onError) {
+    save: function (data, onLoad, onError, URL) {
       var badStatusText = 'Ошибка загрузки объявления: ';
       var xhr = createXhrRequest(onLoad, onError, badStatusText);
-      xhr.open('POST', URL_POST);
+      xhr.open('POST', URL);
       xhr.send(data);
     },
-    load: function (onLoad, onError) {
+    load: function (onLoad, onError, URL) {
       var badStatusText = 'Статус загрузки похожих объявлений: ';
       var xhr = createXhrRequest(onLoad, onError, badStatusText);
-      xhr.open('GET', URL_GET);
+      xhr.open('GET', URL);
       xhr.send();
     }
   };

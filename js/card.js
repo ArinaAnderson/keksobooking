@@ -4,7 +4,7 @@
   var map = document.querySelector('.map');
   var mapFilters = document.querySelector('.map__filters-container');
   var activeCard;
-  var offerTypeListMap = {
+  var offerTypeEngToRus = {
     'flat': 'Квартира',
     'palace': 'Дворец',
     'bungalo': 'Бунгало',
@@ -60,7 +60,7 @@
     card.querySelector('.popup__text--price').textContent = offerData.offer.price + ' ₽/ночь';
     card.querySelector('.popup__text--capacity').textContent = offerData.offer.rooms + ' ' + defineRoomEnding(offerData.offer.rooms) + ' для '
       + offerData.offer.guests + ' ' + defineGuestEnding(offerData.offer.guests);
-    card.querySelector('.popup__type').textContent = offerTypeListMap[offerData.offer.type];
+    card.querySelector('.popup__type').textContent = offerTypeEngToRus[offerData.offer.type];
     card.querySelector('.popup__text--time').textContent = 'Заезд после ' + offerData.offer.checkin + ', выезд до ' + offerData.offer.checkout;
 
     var featuresFragment = document.createDocumentFragment();

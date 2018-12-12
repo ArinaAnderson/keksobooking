@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+  var OFFERS_NUMBER = 5;
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPins = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
@@ -28,7 +29,8 @@
   window.pin = {
     render: function (offersData) {
       var fragment = document.createDocumentFragment();
-      for (var i = 0; i < offersData.length; i++) {
+      var offersNum = offersData.length > OFFERS_NUMBER ? OFFERS_NUMBER : offersData.length;
+      for (var i = 0; i < offersNum; i++) {
         fragment.appendChild(renderPin(offersData[i]));
       }
       mapPins.appendChild(fragment);
@@ -45,6 +47,12 @@
         nextPin.parentElement.removeChild(nextPin);
         nextPin = mainPin.nextElementSibling;
       }
+    },
+    update: function (loadedPins) {
+      window.card.remove();
+      window.pin.delete(mainPin);
+      var selectedPins = window.filtering.filterPins(loadedPins);
+      window.pin.render(selectedPins);
     }
   };
 })();

@@ -1,36 +1,34 @@
 'use strict';
 (function () {
-  var offerTypePriceListMap = {
+  var URL_POST = 'https://js.dump.academy/keksobooking';
+  var offerTypeToPrice = {
     'bungalo': 0,
     'flat': 1000,
     'house': 5000,
     'palace': 10000
   };
-  var roomsGuestsListMap = {
+  var roomNumToGuestNum = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
     '100': ['0']
   };
-  var initialOfferSelectValues = {
+  var offerSelectNameToInitialValue = {
     'type': 'flat',
     'timein': '12:00',
     'timeout': '12:00',
     'rooms': '1',
     'capacity': '1'
   };
-  var map = document.querySelector('.map');
-  // var filterForm = document.querySelector('.map__filters');
-  var fieldsets = document.querySelectorAll('fieldset');
-  var selectItems = document.querySelectorAll('select');
   var priceInput = document.querySelector('input[name="price"]');
   var typeSelect = document.querySelector('select[name="type"]');
   var checkinSelect = document.querySelector('select[name="timein"]');
   var checkoutSelect = document.querySelector('select[name="timeout"]');
-  var roomsSelect = document.querySelector('select[name="rooms"]');
-  var guestsSelect = document.querySelector('select[name="capacity"]');
+  var roomSelect = document.querySelector('select[name="rooms"]');
+  var guestSelect = document.querySelector('select[name="capacity"]');
   var offerForm = document.querySelector('.ad-form');
   var offerSelects = offerForm.querySelectorAll('select');
+  var offerFieldsets = offerForm.querySelectorAll('fieldset');
   var offerTitle = offerForm.querySelector('input[name="title"]');
   var offerFeatures = offerForm.querySelectorAll('[name="features"]');
   var offerDescription = offerForm.querySelector('[name="description"]');
@@ -39,8 +37,8 @@
 
   function setPriceMin() {
     var typeValue = typeSelect.value;
-    priceInput.min = offerTypePriceListMap[typeValue];
-    priceInput.placeholder = offerTypePriceListMap[typeValue];
+    priceInput.min = offerTypeToPrice[typeValue];
+    priceInput.placeholder = offerTypeToPrice[typeValue];
   }
   function typeSelectHandler() {
     setPriceMin();
@@ -59,17 +57,17 @@
 
   function getErrorText() {
     var errorText = [];
-    for (var i = 0; i < roomsGuestsListMap[roomsSelect.value].length; i++) {
-      errorText.push(guestsSelect.querySelector('option[value="' + roomsGuestsListMap[roomsSelect.value][i] + '"]').textContent);
+    for (var i = 0; i < roomNumToGuestNum[roomSelect.value].length; i++) {
+      errorText.push(guestSelect.querySelector('option[value="' + roomNumToGuestNum[roomSelect.value][i] + '"]').textContent);
     }
 
     return errorText;
   }
   function validateGuestNum() {
-    if (roomsGuestsListMap[roomsSelect.value].indexOf(guestsSelect.value) < 0) {
-      guestsSelect.setCustomValidity('Такое количество комнат предусмотрено ' + getErrorText().join(', или '));
+    if (roomNumToGuestNum[roomSelect.value].indexOf(guestSelect.value) < 0) {
+      guestSelect.setCustomValidity('Такое количество комнат предусмотрено ' + getErrorText().join(', или '));
     } else {
-      guestsSelect.setCustomValidity('');
+      guestSelect.setCustomValidity('');
     }
   }
   function guestNumSelectHandler() {
@@ -80,8 +78,8 @@
     typeSelect.addEventListener('change', typeSelectHandler);
     checkinSelect.addEventListener('change', timeSelectHandler);
     checkoutSelect.addEventListener('change', timeSelectHandler);
-    roomsSelect.addEventListener('change', guestNumSelectHandler);
-    guestsSelect.addEventListener('change', guestNumSelectHandler);
+    roomSelect.addEventListener('change', guestNumSelectHandler);
+    guestSelect.addEventListener('change', guestNumSelectHandler);
   }
 
   function formSubmitHandler() {
@@ -90,50 +88,36 @@
   }
   offerForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(offerForm), formSubmitHandler, window.notifications.notifyOfError);
+    window.backend.save(new FormData(offerForm), formSubmitHandler, window.notifications.notifyOfError, URL_POST);
   });
 
-
-  function resetSelects(selectList) {
-    selectList.forEach(function (item) {
-      item.value = initialOfferSelectValues[item.name];
-    });
-  }
   function resetForm() {
-    resetSelects(offerSelects);
+    window.utils.resetSelects(offerSelects, offerSelectNameToInitialValue);
+    window.utils.toggleCheckedAttr(offerFeatures, false);
     offerTitle.value = '';
     priceInput.value = '';
     setPriceMin();
     offerDescription.value = '';
-    window.utils.toggleCheckedAttr(offerFeatures, false);
-    /* photosUpload;
-    avatarUpload*/
   }
   function resetBtnClickHandler(evt) {
     evt.preventDefault();
-    // resetForm();
-    // resetFilters();
     window.main.deactivate();
   }
   resetBtn.addEventListener('click', resetBtnClickHandler);
-  // resetBtn.addEventListener('keydown', resetBtnEnterHandler);
 
 
   window.form = {
     activate: function () {
       validateFormFields();
-      window.utils.toggleDisableAttr(fieldsets, false);
-      window.utils.toggleDisableAttr(selectItems, false);
-      map.classList.remove('map--faded');
+      window.utils.toggleDisableAttr(offerFieldsets, false);
+      window.utils.toggleDisableAttr(offerSelects, false);
       offerForm.classList.remove('ad-form--disabled');
     },
     deactivate: function () {
-      window.utils.toggleDisableAttr(fieldsets, true);
-      window.utils.toggleDisableAttr(selectItems, true);
+      window.utils.toggleDisableAttr(offerFieldsets, true);
+      window.utils.toggleDisableAttr(offerSelects, true);
       offerForm.classList.add('ad-form--disabled');
       resetForm();
-      // setPriceMin();
-      map.classList.add('map--faded');
     },
     fillAddressField: function (x, y) {
       addressInput.value = x + ', ' + y;
