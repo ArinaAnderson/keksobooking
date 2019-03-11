@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var URL_POST = 'https://js.dump.academy/keksobooking';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var offerTypeToPrice = {
     'bungalo': 0,
     'flat': 1000,
