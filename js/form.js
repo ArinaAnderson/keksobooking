@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var URL_POST = 'https://js.dump.academy/keksobooking';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var offerTypeToPrice = {
     'bungalo': 0,
     'flat': 1000,
@@ -35,6 +36,171 @@
   var addressInput = offerForm.querySelector('input[name="address"]');
   var resetBtn = offerForm.querySelector('.ad-form__reset');
 
+  /* PHOTO UPLOAD */
+  var previewParams = {
+    defaultSrc: '',
+    src: '',
+    alt: 'Фотография жилья',
+    width: '70',
+    height: '70',
+    imgClasses: ['popup__photo'],
+    addNewImage: function () {
+      var img = document.createElement('img');
+      img.alt = this.alt;
+      img.width = this.width;
+      img.height = this.height;
+      img.className = this.imgClasses.join(' ');
+      img.src = this.src;
+      return img;
+    },
+    box: {
+      tag: 'div',
+      classes: 'ad-form__photo',
+      initialAmount: 1,
+      amount: 1,
+      imgLimit: true
+    },
+    /*resetPreview: function (item) {
+      var img = item.querySelector('img');
+      var initialSrc = this.defaultSrc;
+      if (!initialSrc) {
+        img.removeAttribute('width');
+        img.removeAttribute('height');
+        img.removeAttribute('alt');
+      }
+    },*/
+    resetPreviews: function (selections) {
+      for (var i = selections.length - 1; i >= this.box.initialAmount; i--) {
+        selections[i].parentNode.removeChild(selections[i]);
+        selections.pop();
+      }
+      this.box.amount = 1;
+      /*selections.forEach(function (item) {
+        this.resetPreview(item);
+      }, this);*/
+      selections.forEach(function (item) {
+        var img = item.querySelector('img');
+        img.src = this.defaultSrc; // defaultSrc of undefined???
+        if (!this.defaultSrc) {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.removeAttribute('alt');
+        }
+      }, this);
+    }
+  };
+  var avaParams = {
+    defaultSrc: 'img/muffin-grey.svg',
+    src: '',
+    alt: 'Аватар пользователя',
+    width: '40',
+    height: '44',
+    classes: ['ad-form-header__preview-img'],//replace classes for imgClasses
+    addNewImage: function () {
+      var img = document.createElement('img');
+      img.alt = this.alt;
+      img.width = this.width;
+      img.height = this.height;
+      img.className = this.classes.join(' ');
+      img.src = this.src;
+      return img;
+    },
+    box: {
+      tag: 'div',
+      classes: 'ad-form-header__preview',
+      initialAmount: 1,
+      amount: 1,
+      imgLimit: false
+    },
+    resetPreviews: function (selections) {
+      for (var i = selections.length - 1; i >= this.box.initialAmount; i--) {
+        selections[i].parentNode.removeChild(selections[i]);
+        selections.pop();
+      }
+      this.box.amount = 1;
+      /*selections.forEach(function (item) {
+        this.resetPreview(item);
+      }, this);*/
+      selections.forEach(function (item) {
+        var img = item.querySelector('img');
+        img.src = this.defaultSrc; // defaultSrc of undefined???
+        if (!this.defaultSrc) {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.removeAttribute('alt');
+        }
+      }, this);
+    }
+  };
+
+  function getPreviewList(imgObj) {
+    var previewList = Array.prototype.slice.call(document.querySelectorAll('.' + imgObj.box.classes));//[0]
+    return previewList;
+  }
+  var previewSelections = getPreviewList(previewParams);
+  previewParams.box.initialAmount = previewSelections.length;
+  var photoChooser = document.querySelector('[name="images"]');
+
+  var avaSelections = getPreviewList(avaParams);
+  avaParams.box.initialAmount = avaSelections.length;
+  var avaChooser = document.querySelector('[name = "avatar"]');
+
+  function readFile(selection, imgObj) {
+    if (selection) {
+      var selectionName = selection.name.toLowerCase();
+      var matches = FILE_TYPES.some(function (it) {
+        return selectionName.endsWith(it);
+      });
+    }
+    var image = imgObj.addNewImage();
+    
+    if (matches) {
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+          imgObj.src = reader.result;
+          image.src = imgObj.src;
+      });
+      reader.readAsDataURL(selection);
+    }
+    return image;
+  }
+
+  function renderImg(file, selections, imgParams) {
+    if (file) {
+      var previewImg = readFile(file, imgParams);
+
+      if (imgParams.box.amount > imgParams.box.initialAmount && imgParams.box.imgLimit) { //if (selections.length > 1 && imgLimit) {
+        // var nextPreviewBox = utils.createElem(imgParams.box.tag, imgParams.box.classes.join(' '));
+        var nextPreviewBox = utils.createElem(imgParams.box.tag, imgParams.box.classes);
+        selections[imgParams.box.amount - 2].insertAdjacentElement('afterend', nextPreviewBox);
+        nextPreviewBox.appendChild(previewImg);
+        selections.push(nextPreviewBox);
+      }
+
+      if ((!imgParams.box.imgLimit) || selections.length <= imgParams.box.initialAmount) {
+        var oldImg = selections[imgParams.box.amount - 1].querySelector('img');
+        selections[imgParams.box.amount - 1].replaceChild(previewImg, oldImg);
+      }
+
+      if (imgParams.box.imgLimit || imgParams.box.amount < imgParams.box.initialAmount) {
+        imgParams.box.amount++;
+      }
+    } 
+  }
+  photoChooser.addEventListener('change', function(evt) {
+    for (var i = 0; i < evt.target.files.length; i++) {
+      renderImg(evt.target.files[i], previewSelections, previewParams);
+    }
+  });
+
+  avaChooser.addEventListener('change', function(evt) {
+    for (var i = 0; i < evt.target.files.length; i++) {
+      renderImg(evt.target.files[i], avaSelections, avaParams);
+    }
+  });  
+
+
+
   function setPriceMin() {
     var typeValue = typeSelect.value;
     priceInput.min = offerTypeToPrice[typeValue];
@@ -46,7 +212,7 @@
 
   function validateCheckout() {
     if (checkoutSelect.value !== checkinSelect.value) {
-      checkoutSelect.setCustomValidity('Время выезда должно быть ' + checkinSelect.value);
+      checkoutSelect.setCustomValidity('Time of checkout should be ' + checkinSelect.value);
     } else {
       checkoutSelect.setCustomValidity('');
     }
@@ -65,7 +231,7 @@
   }
   function validateGuestNum() {
     if (roomNumToGuestNum[roomSelect.value].indexOf(guestSelect.value) < 0) {
-      guestSelect.setCustomValidity('Такое количество комнат предусмотрено ' + getErrorText().join(', или '));
+      guestSelect.setCustomValidity('This number of rooms is for ' + getErrorText().join(', or '));
     } else {
       guestSelect.setCustomValidity('');
     }
@@ -84,6 +250,10 @@
 
   function formSubmitHandler() {
     window.main.deactivate();
+    /* utils.resetPreviews(previewSelections, previewParams);
+    utils.resetPreviews(avaSelections, avaParams);*/
+    previewParams.resetPreviews(previewSelections);
+    avaParams.resetPreviews(avaSelections);
     window.notifications.notifyOfSuccess();
   }
   offerForm.addEventListener('submit', function (evt) {
@@ -102,6 +272,8 @@
   function resetBtnClickHandler(evt) {
     evt.preventDefault();
     window.main.deactivate();
+    previewParams.resetPreviews(previewSelections);
+    avaParams.resetPreviews(avaSelections);
   }
   resetBtn.addEventListener('click', resetBtnClickHandler);
 
