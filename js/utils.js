@@ -18,7 +18,7 @@
       }
       return list;
     },
-    createElem: function (elemTag, elemClass, elemParent) {
+    createElem: function (elemTag, elemClass) {
       var elem = document.createElement(elemTag);
       elem.className = elemClass;
       return elem;
@@ -43,22 +43,6 @@
     resetSelects: function (selectList, initialValues) {
       selectList.forEach(function (item) {
         item.value = initialValues[item.name];
-      });
-    },
-    resetPreviews(selections, imgObj) {
-      for (var i = selections.length - 1; i >= imgObj.box.initialAmount; i--) {
-        selections[i].parentNode.removeChild(selections[i]);
-        selections.pop();
-      }
-      imgObj.box.amount = 1;
-      selections.forEach(function (item) {
-        var img = item.querySelector('img');
-        img.src = imgObj.defaultSrc;
-        if (!imgObj.defaultSrc) {
-          img.removeAttribute('width');
-          img.removeAttribute('height');
-          img.removeAttribute('alt');
-        }
       });
     },
     debounce: function (cb) {

@@ -59,6 +59,22 @@
       initialAmount: 1,
       amount: 1,
       imgLimit: true
+    },
+    resetPreviews: function (selections) {
+      for (var i = selections.length - 1; i >= this.box.initialAmount; i--) {
+        selections[i].parentNode.removeChild(selections[i]);
+        selections.pop();
+      }
+      this.box.amount = 1;
+      selections.forEach(function (item) {
+        var img = item.querySelector('img');
+        img.src = this.defaultSrc;
+        if (!this.defaultSrc) {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.removeAttribute('alt');
+        }
+      }, this);
     }
   };
   var avaParams = {
@@ -67,7 +83,7 @@
     alt: 'Аватар пользователя',
     width: '40',
     height: '44',
-    imgClasses: ['ad-form-header__preview-img'],//replace classes for imgClasses
+    imgClasses: ['ad-form-header__preview-img'],
     addNewImage: function () {
       var img = document.createElement('img');
       img.alt = this.alt;
@@ -83,6 +99,22 @@
       initialAmount: 1,
       amount: 1,
       imgLimit: false
+    },
+    resetPreviews: function (selections) {
+      for (var i = selections.length - 1; i >= this.box.initialAmount; i--) {
+        selections[i].parentNode.removeChild(selections[i]);
+        selections.pop();
+      }
+      this.box.amount = 1;
+      selections.forEach(function (item) {
+        var img = item.querySelector('img');
+        img.src = this.defaultSrc;
+        if (!this.defaultSrc) {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.removeAttribute('alt');
+        }
+      }, this);
     }
   };
 
@@ -106,12 +138,12 @@
       });
     }
     var image = imgObj.addNewImage();
-    
+
     if (matches) {
       var reader = new FileReader();
       reader.addEventListener('load', function () {
-          imgObj.src = reader.result;
-          image.src = imgObj.src;
+        imgObj.src = reader.result;
+        image.src = imgObj.src;
       });
       reader.readAsDataURL(selection);
     }
@@ -137,21 +169,19 @@
       if (imgParams.box.imgLimit || imgParams.box.amount < imgParams.box.initialAmount) {
         imgParams.box.amount++;
       }
-    } 
+    }
   }
-  photoChooser.addEventListener('change', function(evt) {
+  photoChooser.addEventListener('change', function (evt) {
     for (var i = 0; i < evt.target.files.length; i++) {
       renderImg(evt.target.files[i], previewSelections, previewParams);
     }
   });
 
-  avaChooser.addEventListener('change', function(evt) {
+  avaChooser.addEventListener('change', function (evt) {
     for (var i = 0; i < evt.target.files.length; i++) {
       renderImg(evt.target.files[i], avaSelections, avaParams);
     }
-  });  
-
-
+  });
 
   function setPriceMin() {
     var typeValue = typeSelect.value;
@@ -202,8 +232,8 @@
 
   function formSubmitHandler() {
     window.main.deactivate();
-    utils.resetPreviews(previewSelections, previewParams);
-    utils.resetPreviews(avaSelections, avaParams);
+    previewParams.resetPreviews(previewSelections);
+    avaParams.resetPreviews(avaSelections);
     window.notifications.notifyOfSuccess();
   }
   offerForm.addEventListener('submit', function (evt) {
@@ -222,8 +252,8 @@
   function resetBtnClickHandler(evt) {
     evt.preventDefault();
     window.main.deactivate();
-    utils.resetPreviews(previewSelections, previewParams);
-    utils.resetPreviews(avaSelections, avaParams);
+    previewParams.resetPreviews(previewSelections);
+    avaParams.resetPreviews(avaSelections);
   }
   resetBtn.addEventListener('click', resetBtnClickHandler);
 
