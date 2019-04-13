@@ -43,7 +43,7 @@
     alt: 'Фотография жилья',
     width: '70',
     height: '70',
-    imgClasses: ['popup__photo'],
+    imgClasses: ['popup__photo', 'popup__photo--edit'],
     addNewImage: function () {
       var img = document.createElement('img');
       img.alt = this.alt;
@@ -60,27 +60,16 @@
       amount: 1,
       imgLimit: true
     },
-    /*resetPreview: function (item) {
-      var img = item.querySelector('img');
-      var initialSrc = this.defaultSrc;
-      if (!initialSrc) {
-        img.removeAttribute('width');
-        img.removeAttribute('height');
-        img.removeAttribute('alt');
-      }
-    },*/
+
     resetPreviews: function (selections) {
       for (var i = selections.length - 1; i >= this.box.initialAmount; i--) {
         selections[i].parentNode.removeChild(selections[i]);
         selections.pop();
       }
       this.box.amount = 1;
-      /*selections.forEach(function (item) {
-        this.resetPreview(item);
-      }, this);*/
       selections.forEach(function (item) {
         var img = item.querySelector('img');
-        img.src = this.defaultSrc; // defaultSrc of undefined???
+        img.src = this.defaultSrc;
         if (!this.defaultSrc) {
           img.removeAttribute('width');
           img.removeAttribute('height');
@@ -89,13 +78,14 @@
       }, this);
     }
   };
+
   var avaParams = {
     defaultSrc: 'img/muffin-grey.svg',
     src: '',
     alt: 'Аватар пользователя',
     width: '40',
     height: '44',
-    classes: ['ad-form-header__preview-img'],//replace classes for imgClasses
+    classes: ['ad-form-header__preview-img'],
     addNewImage: function () {
       var img = document.createElement('img');
       img.alt = this.alt;
@@ -118,12 +108,9 @@
         selections.pop();
       }
       this.box.amount = 1;
-      /*selections.forEach(function (item) {
-        this.resetPreview(item);
-      }, this);*/
       selections.forEach(function (item) {
         var img = item.querySelector('img');
-        img.src = this.defaultSrc; // defaultSrc of undefined???
+        img.src = this.defaultSrc;
         if (!this.defaultSrc) {
           img.removeAttribute('width');
           img.removeAttribute('height');
@@ -165,12 +152,84 @@
     return image;
   }
 
+  // start of handler:
+  function markerMouseDownHandler(evt) {
+    evt.target.draggable = false;
+    var evtParent = evt.target.parentNode;
+    var nextEl = evt.target.nextElementSibling;
+
+    var initCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    function markerMouseMoveHandler(moveEvt) {
+      evt.target.classList.add('popup__marker--hover');
+
+      var shiftCoords = {
+        x: initCoords.x - moveEvt.clientX,
+        y: initCoords.y - moveEvt.clientY,
+      };
+
+      // validate!!!!!! the picture should not decrease to nothing
+      nextEl.style.width = (nextEl.offsetWidth + shiftCoords.x) + 'px';
+      nextEl.style.height = 'auto';
+
+      initCoords.x = moveEvt.clientX;
+      initCoords.y = moveEvt.clientY;
+    }
+    function markerMouseUpHandler(upEvt) {
+      evt.target.classList.remove('popup__marker--hover');
+
+      document.removeEventListener('mousemove', markerMouseMoveHandler);
+      document.removeEventListener('mouseup', markerMouseUpHandler);
+    }
+    document.addEventListener('mousemove', markerMouseMoveHandler);
+    document.addEventListener('mouseup', markerMouseUpHandler);
+  }
+
+  function imgMouseDownHandler(evt) {
+    evt.target.draggable = false;
+    var initCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+    var evtParent = evt.target.parentNode;
+
+    function imgMouseMoveHandler(moveEvt) {
+      evtParent.classList.add('ad-form__photo--hover');
+
+      var shiftCoords = {
+        x: initCoords.x - moveEvt.clientX,
+        y: initCoords.y - moveEvt.clientY,
+      };
+      var styleLeft = utils.validateCoord(evt.target.offsetLeft - shiftCoords.x, evtParent.offsetWidth - evt.target.offsetWidth, 0);
+      var styleTop = utils.validateCoord(evt.target.offsetTop - shiftCoords.y, evtParent.offsetHeight - evt.target.offsetHeight, 0);
+      evt.target.style.left = styleLeft + 'px';
+      evt.target.style.top = styleTop + 'px';
+
+      initCoords.x = moveEvt.clientX;
+      initCoords.y = moveEvt.clientY;
+    }
+    function imgMouseUpHandler(upEvt) {
+      evt.target.style.left = evt.target.offsetLeft + 'px';
+      evt.target.style.top = evt.target.offsetTop + 'px';
+
+      evtParent.classList.remove('ad-form__photo--hover');
+
+      document.removeEventListener('mousemove', imgMouseMoveHandler);
+      document.removeEventListener('mouseup', imgMouseUpHandler);
+    }
+    document.addEventListener('mousemove', imgMouseMoveHandler);
+    document.addEventListener('mouseup', imgMouseUpHandler);
+  }
+
   function renderImg(file, selections, imgParams) {
     if (file) {
       var previewImg = readFile(file, imgParams);
+      previewImg.addEventListener('mousedown', imgMouseDownHandler);
 
-      if (imgParams.box.amount > imgParams.box.initialAmount && imgParams.box.imgLimit) { //if (selections.length > 1 && imgLimit) {
-        // var nextPreviewBox = utils.createElem(imgParams.box.tag, imgParams.box.classes.join(' '));
+      if (imgParams.box.amount > imgParams.box.initialAmount && imgParams.box.imgLimit) {
         var nextPreviewBox = utils.createElem(imgParams.box.tag, imgParams.box.classes);
         selections[imgParams.box.amount - 2].insertAdjacentElement('afterend', nextPreviewBox);
         nextPreviewBox.appendChild(previewImg);
@@ -185,8 +244,13 @@
       if (imgParams.box.imgLimit || imgParams.box.amount < imgParams.box.initialAmount) {
         imgParams.box.amount++;
       }
+
+      var marker = utils.createElem('span', 'popup__marker');
+      marker.addEventListener('mousedown', markerMouseDownHandler);
+      previewImg.insertAdjacentElement('beforebegin', marker);
     } 
   }
+
   photoChooser.addEventListener('change', function(evt) {
     for (var i = 0; i < evt.target.files.length; i++) {
       renderImg(evt.target.files[i], previewSelections, previewParams);
@@ -250,8 +314,6 @@
 
   function formSubmitHandler() {
     window.main.deactivate();
-    /* utils.resetPreviews(previewSelections, previewParams);
-    utils.resetPreviews(avaSelections, avaParams);*/
     previewParams.resetPreviews(previewSelections);
     avaParams.resetPreviews(avaSelections);
     window.notifications.notifyOfSuccess();
