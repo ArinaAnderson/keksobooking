@@ -18,12 +18,12 @@
   var selectFeaturesArea = document.querySelector('#housing-features');
 
   // функция проверяет, не выходит ли за границы доступной области main-pin
-  /* function validateCoord(coord, minValue, maxValue) {
+  function validateCoord(coord, minValue, maxValue) {
     coord = coord < minValue ? minValue : coord;
     coord = coord > maxValue ? maxValue : coord;
 
     return coord;
-  }*/
+  }
 
   // обработчик удачной загрузки похожих объявлений
   function successLoadHandler(data) {
@@ -52,9 +52,9 @@
         y: moveEvt.clientY
       };
 
-      var validatedX = utils.validateCoord(mainPin.offsetLeft - shift.x, locationParams.MIN_LOCATION_X - 0.5 * mainPin.offsetWidth,
+      var validatedX = validateCoord(mainPin.offsetLeft - shift.x, locationParams.MIN_LOCATION_X - 0.5 * mainPin.offsetWidth,
           locationParams.MAX_LOCATION_X - 0.5 * mainPin.offsetWidth);
-      var validatedY = utils.validateCoord(mainPin.offsetTop - shift.y, locationParams.MIN_LOCATION_Y - mainPin.offsetHeight,
+      var validatedY = validateCoord(mainPin.offsetTop - shift.y, locationParams.MIN_LOCATION_Y - mainPin.offsetHeight,
           locationParams.MAX_LOCATION_Y - mainPin.offsetHeight);
       window.utils.setupStyleLeftTop(mainPin, validatedX, validatedY);
 

@@ -45,11 +45,21 @@
         item.value = initialValues[item.name];
       });
     },
-    validateCoord: function (coord, minValue, maxValue) {
-      coord = coord < minValue ? minValue : coord;
-      coord = coord > maxValue ? maxValue : coord;
-
-      return coord;
+    resetPreviews(selections, imgObj) {
+      for (var i = selections.length - 1; i >= imgObj.box.initialAmount; i--) {
+        selections[i].parentNode.removeChild(selections[i]);
+        selections.pop();
+      }
+      imgObj.box.amount = 1;
+      selections.forEach(function (item) {
+        var img = item.querySelector('img');
+        img.src = imgObj.defaultSrc;
+        if (!imgObj.defaultSrc) {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.removeAttribute('alt');
+        }
+      });
     },
     debounce: function (cb) {
       var lastTimeout = null;
