@@ -18,6 +18,11 @@
       }
       return list;
     },
+    createElem: function (elemTag, elemClass, elemParent) {
+      var elem = document.createElement(elemTag);
+      elem.className = elemClass;
+      return elem;
+    },
     setupStyleLeftTop: function (elem, x, y) {
       elem.style.left = x + 'px';
       elem.style.top = y + 'px';
@@ -39,6 +44,12 @@
       selectList.forEach(function (item) {
         item.value = initialValues[item.name];
       });
+    },
+    validateCoord: function (coord, minValue, maxValue) {
+      coord = coord < minValue ? minValue : coord;
+      coord = coord > maxValue ? maxValue : coord;
+
+      return coord;
     },
     debounce: function (cb) {
       var lastTimeout = null;

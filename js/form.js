@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var URL_POST = 'https://js.dump.academy/keksobooking';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var offerTypeToPrice = {
     'bungalo': 0,
     'flat': 1000,
@@ -35,6 +36,235 @@
   var addressInput = offerForm.querySelector('input[name="address"]');
   var resetBtn = offerForm.querySelector('.ad-form__reset');
 
+  /* PHOTO UPLOAD */
+  var previewParams = {
+    defaultSrc: '',
+    src: '',
+    alt: 'Фотография жилья',
+    width: '70',
+    height: '70',
+    imgClasses: ['popup__photo', 'popup__photo--edit'],
+    addNewImage: function () {
+      var img = document.createElement('img');
+      img.alt = this.alt;
+      img.width = this.width;
+      img.height = this.height;
+      img.className = this.imgClasses.join(' ');
+      img.src = this.src;
+      return img;
+    },
+    box: {
+      tag: 'div',
+      classes: 'ad-form__photo',
+      initialAmount: 1,
+      amount: 1,
+      imgLimit: true
+    },
+
+    resetPreviews: function (selections) {
+      for (var i = selections.length - 1; i >= this.box.initialAmount; i--) {
+        selections[i].parentNode.removeChild(selections[i]);
+        selections.pop();
+      }
+      this.box.amount = 1;
+      selections.forEach(function (item) {
+        var img = item.querySelector('img');
+        img.src = this.defaultSrc;
+        if (!this.defaultSrc) {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.removeAttribute('alt');
+        }
+      }, this);
+    }
+  };
+
+  var avaParams = {
+    defaultSrc: 'img/muffin-grey.svg',
+    src: '',
+    alt: 'Аватар пользователя',
+    width: '40',
+    height: '44',
+    classes: ['ad-form-header__preview-img'],
+    addNewImage: function () {
+      var img = document.createElement('img');
+      img.alt = this.alt;
+      img.width = this.width;
+      img.height = this.height;
+      img.className = this.classes.join(' ');
+      img.src = this.src;
+      return img;
+    },
+    box: {
+      tag: 'div',
+      classes: 'ad-form-header__preview',
+      initialAmount: 1,
+      amount: 1,
+      imgLimit: false
+    },
+    resetPreviews: function (selections) {
+      for (var i = selections.length - 1; i >= this.box.initialAmount; i--) {
+        selections[i].parentNode.removeChild(selections[i]);
+        selections.pop();
+      }
+      this.box.amount = 1;
+      selections.forEach(function (item) {
+        var img = item.querySelector('img');
+        img.src = this.defaultSrc;
+        if (!this.defaultSrc) {
+          img.removeAttribute('width');
+          img.removeAttribute('height');
+          img.removeAttribute('alt');
+        }
+      }, this);
+    }
+  };
+
+  function getPreviewList(imgObj) {
+    var previewList = Array.prototype.slice.call(document.querySelectorAll('.' + imgObj.box.classes));//[0]
+    return previewList;
+  }
+  var previewSelections = getPreviewList(previewParams);
+  previewParams.box.initialAmount = previewSelections.length;
+  var photoChooser = document.querySelector('[name="images"]');
+
+  var avaSelections = getPreviewList(avaParams);
+  avaParams.box.initialAmount = avaSelections.length;
+  var avaChooser = document.querySelector('[name = "avatar"]');
+
+  function readFile(selection, imgObj) {
+    if (selection) {
+      var selectionName = selection.name.toLowerCase();
+      var matches = FILE_TYPES.some(function (it) {
+        return selectionName.endsWith(it);
+      });
+    }
+    var image = imgObj.addNewImage();
+    
+    if (matches) {
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+          imgObj.src = reader.result;
+          image.src = imgObj.src;
+      });
+      reader.readAsDataURL(selection);
+    }
+    return image;
+  }
+
+  // start of handler:
+  function markerMouseDownHandler(evt) {
+    evt.target.draggable = false;
+    var evtParent = evt.target.parentNode;
+    var nextEl = evt.target.nextElementSibling;
+
+    var initCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    function markerMouseMoveHandler(moveEvt) {
+      evt.target.classList.add('popup__marker--hover');
+
+      var shiftCoords = {
+        x: initCoords.x - moveEvt.clientX,
+        y: initCoords.y - moveEvt.clientY,
+      };
+
+      // validate!!!!!! the picture should not decrease to nothing
+      nextEl.style.width = (nextEl.offsetWidth + shiftCoords.x) + 'px';
+      nextEl.style.height = 'auto';
+
+      initCoords.x = moveEvt.clientX;
+      initCoords.y = moveEvt.clientY;
+    }
+    function markerMouseUpHandler(upEvt) {
+      evt.target.classList.remove('popup__marker--hover');
+
+      document.removeEventListener('mousemove', markerMouseMoveHandler);
+      document.removeEventListener('mouseup', markerMouseUpHandler);
+    }
+    document.addEventListener('mousemove', markerMouseMoveHandler);
+    document.addEventListener('mouseup', markerMouseUpHandler);
+  }
+
+  function imgMouseDownHandler(evt) {
+    evt.target.draggable = false;
+    var initCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+    var evtParent = evt.target.parentNode;
+
+    function imgMouseMoveHandler(moveEvt) {
+      evtParent.classList.add('ad-form__photo--hover');
+
+      var shiftCoords = {
+        x: initCoords.x - moveEvt.clientX,
+        y: initCoords.y - moveEvt.clientY,
+      };
+      var styleLeft = utils.validateCoord(evt.target.offsetLeft - shiftCoords.x, evtParent.offsetWidth - evt.target.offsetWidth, 0);
+      var styleTop = utils.validateCoord(evt.target.offsetTop - shiftCoords.y, evtParent.offsetHeight - evt.target.offsetHeight, 0);
+      evt.target.style.left = styleLeft + 'px';
+      evt.target.style.top = styleTop + 'px';
+
+      initCoords.x = moveEvt.clientX;
+      initCoords.y = moveEvt.clientY;
+    }
+    function imgMouseUpHandler(upEvt) {
+      evt.target.style.left = evt.target.offsetLeft + 'px';
+      evt.target.style.top = evt.target.offsetTop + 'px';
+
+      evtParent.classList.remove('ad-form__photo--hover');
+
+      document.removeEventListener('mousemove', imgMouseMoveHandler);
+      document.removeEventListener('mouseup', imgMouseUpHandler);
+    }
+    document.addEventListener('mousemove', imgMouseMoveHandler);
+    document.addEventListener('mouseup', imgMouseUpHandler);
+  }
+
+  function renderImg(file, selections, imgParams) {
+    if (file) {
+      var previewImg = readFile(file, imgParams);
+      previewImg.addEventListener('mousedown', imgMouseDownHandler);
+
+      if (imgParams.box.amount > imgParams.box.initialAmount && imgParams.box.imgLimit) {
+        var nextPreviewBox = utils.createElem(imgParams.box.tag, imgParams.box.classes);
+        selections[imgParams.box.amount - 2].insertAdjacentElement('afterend', nextPreviewBox);
+        nextPreviewBox.appendChild(previewImg);
+        selections.push(nextPreviewBox);
+      }
+
+      if ((!imgParams.box.imgLimit) || selections.length <= imgParams.box.initialAmount) {
+        var oldImg = selections[imgParams.box.amount - 1].querySelector('img');
+        selections[imgParams.box.amount - 1].replaceChild(previewImg, oldImg);
+      }
+
+      if (imgParams.box.imgLimit || imgParams.box.amount < imgParams.box.initialAmount) {
+        imgParams.box.amount++;
+      }
+
+      var marker = utils.createElem('span', 'popup__marker');
+      marker.addEventListener('mousedown', markerMouseDownHandler);
+      previewImg.insertAdjacentElement('beforebegin', marker);
+    } 
+  }
+
+  photoChooser.addEventListener('change', function(evt) {
+    for (var i = 0; i < evt.target.files.length; i++) {
+      renderImg(evt.target.files[i], previewSelections, previewParams);
+    }
+  });
+
+  avaChooser.addEventListener('change', function(evt) {
+    for (var i = 0; i < evt.target.files.length; i++) {
+      renderImg(evt.target.files[i], avaSelections, avaParams);
+    }
+  });  
+
+
+
   function setPriceMin() {
     var typeValue = typeSelect.value;
     priceInput.min = offerTypeToPrice[typeValue];
@@ -46,7 +276,7 @@
 
   function validateCheckout() {
     if (checkoutSelect.value !== checkinSelect.value) {
-      checkoutSelect.setCustomValidity('Время выезда должно быть ' + checkinSelect.value);
+      checkoutSelect.setCustomValidity('Time of checkout should be ' + checkinSelect.value);
     } else {
       checkoutSelect.setCustomValidity('');
     }
@@ -65,7 +295,7 @@
   }
   function validateGuestNum() {
     if (roomNumToGuestNum[roomSelect.value].indexOf(guestSelect.value) < 0) {
-      guestSelect.setCustomValidity('Такое количество комнат предусмотрено ' + getErrorText().join(', или '));
+      guestSelect.setCustomValidity('This number of rooms is for ' + getErrorText().join(', or '));
     } else {
       guestSelect.setCustomValidity('');
     }
@@ -84,6 +314,8 @@
 
   function formSubmitHandler() {
     window.main.deactivate();
+    previewParams.resetPreviews(previewSelections);
+    avaParams.resetPreviews(avaSelections);
     window.notifications.notifyOfSuccess();
   }
   offerForm.addEventListener('submit', function (evt) {
@@ -102,6 +334,8 @@
   function resetBtnClickHandler(evt) {
     evt.preventDefault();
     window.main.deactivate();
+    previewParams.resetPreviews(previewSelections);
+    avaParams.resetPreviews(avaSelections);
   }
   resetBtn.addEventListener('click', resetBtnClickHandler);
 

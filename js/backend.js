@@ -20,13 +20,13 @@
 
   window.backend = {
     save: function (data, onLoad, onError, URL) {
-      var badStatusText = 'Ошибка загрузки объявления: ';
+      var badStatusText = 'Error of the offer upload: ';
       var xhr = createXhrRequest(onLoad, onError, badStatusText);
       xhr.open('POST', URL);
       xhr.send(data);
     },
     load: function (onLoad, onError, URL) {
-      var badStatusText = 'Статус загрузки похожих объявлений: ';
+      var badStatusText = 'The status of download of similar offers: ';
       var xhr = createXhrRequest(onLoad, onError, badStatusText);
       xhr.open('GET', URL);
       xhr.send();
