@@ -81,25 +81,26 @@
   }
 
   //listeners for touch events:
-  function mainPinTouchStartHandler(evt) {
+  /*function mainPinTouchStartHandler(evt) {
     evt.preventDefault();
 
     var startCoords = {
-      x: touch.clientX, //evt.clientX,
-      y: touch.clientY//evt.clientY
+      x: evt.clientX,//touch.clientX, //evt.clientX,
+      y: evt.clientY,//touch.clientY//evt.clientY
     };
+    console.log( evt.clientX);
 
     function mainPinTouchMoveHandler(moveEvt) {
-      moveEvt.preventDefault();
+      //moveEvt.preventDefault();
 
       var shift = {
-        x: startCoords.x - touch.clientX,//startCoords.x - moveEvt.clientX,
-        y: startCoords.y - touch.clientY//startCoords.y - moveEvt.clientY
+        x: startCoords.x - moveEvt.clientX,//startCoords.x - touch.clientX,//startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY//startCoords.y - touch.clientY//startCoords.y - moveEvt.clientY
       };
 
       startCoords = {
-        x: touch.clientX,//moveEvt.clientX,
-        y: touch.clientY//moveEvt.clientY
+        x: moveEvt.clientX,//touch.clientX,//moveEvt.clientX,
+        y: moveEvt.clientY//touch.clientY//moveEvt.clientY
       };
 
       var validatedX = utils.validateCoord(mainPin.offsetLeft - shift.x, locationParams.MIN_LOCATION_X - 0.5 * mainPin.offsetWidth,
@@ -113,7 +114,7 @@
     }
 
     function mainPinTouchEndHandler(upEvt) {
-      upEvt.preventDefault();
+      //upEvt.preventDefault();
       if (isPageActivated) {
         window.form.activate();
         window.filtering.activate();
@@ -128,7 +129,7 @@
 
     document.addEventListener('touchmove', mainPinTouchMoveHandler);
     document.addEventListener('touchend', mainPinTouchEndHandler);
-  }
+  }*/
 //end of touch listeners
 
   window.main = {
