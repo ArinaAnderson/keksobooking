@@ -81,12 +81,10 @@
         selections.pop();
       }
       this.box.amount = 1;
-      /*selections.forEach(function (item) {
-        this.resetPreview(item);
-      }, this);*/
+
       selections.forEach(function (item) {
         var img = item.querySelector('img');
-        img.src = this.defaultSrc; // defaultSrc of undefined???
+        img.src = this.defaultSrc;
         if (!this.defaultSrc) {
           img.removeAttribute('width');
           img.removeAttribute('height');
@@ -101,7 +99,7 @@
     alt: 'Аватар пользователя',
     width: '40',
     height: '44',
-    classes: ['ad-form-header__preview-img'],//replace classes for imgClasses
+    classes: ['ad-form-header__preview-img'],
     addNewImage: function () {
       var img = document.createElement('img');
       img.alt = this.alt;
@@ -124,12 +122,9 @@
         selections.pop();
       }
       this.box.amount = 1;
-      /*selections.forEach(function (item) {
-        this.resetPreview(item);
-      }, this);*/
       selections.forEach(function (item) {
         var img = item.querySelector('img');
-        img.src = this.defaultSrc; // defaultSrc of undefined???
+        img.src = this.defaultSrc;
         if (!this.defaultSrc) {
           img.removeAttribute('width');
           img.removeAttribute('height');
@@ -140,7 +135,7 @@
   };
 
   function getPreviewList(imgObj) {
-    var previewList = Array.prototype.slice.call(document.querySelectorAll('.' + imgObj.box.classes));//[0]
+    var previewList = Array.prototype.slice.call(document.querySelectorAll('.' + imgObj.box.classes));
     return previewList;
   }
   var previewSelections = getPreviewList(previewParams);
@@ -175,8 +170,7 @@
     if (file) {
       var previewImg = readFile(file, imgParams);
 
-      if (imgParams.box.amount > imgParams.box.initialAmount && imgParams.box.imgLimit) { //if (selections.length > 1 && imgLimit) {
-        // var nextPreviewBox = utils.createElem(imgParams.box.tag, imgParams.box.classes.join(' '));
+      if (imgParams.box.amount > imgParams.box.initialAmount && imgParams.box.imgLimit) {
         var nextPreviewBox = utils.createElem(imgParams.box.tag, imgParams.box.classes);
         selections[imgParams.box.amount - 2].insertAdjacentElement('afterend', nextPreviewBox);
         nextPreviewBox.appendChild(previewImg);
@@ -254,15 +248,14 @@
 
   function formSubmitHandler() {
     window.main.deactivate();
-    /* utils.resetPreviews(previewSelections, previewParams);
-    utils.resetPreviews(avaSelections, avaParams);*/
     previewParams.resetPreviews(previewSelections);
     avaParams.resetPreviews(avaSelections);
     window.notifications.notifyOfSuccess();
   }
   offerForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(offerForm), formSubmitHandler, window.notifications.notifyOfError, URL_POST);
+    formSubmitHandler();
+    //window.backend.save(new FormData(offerForm), formSubmitHandler, window.notifications.notifyOfError, URL_POST);
   });
 
   function resetForm() {
@@ -271,7 +264,7 @@
     offerTitle.value = '';
     priceInput.value = '';
     setPriceMin();
-    // filterForm.reset();
+    filterForm.reset();
     offerDescription.value = '';
   }
   function resetBtnClickHandler(evt) {
@@ -300,7 +293,7 @@
       window.utils.toggleDisableAttr(mapCheckBoxes, false);
       map.classList.add('map--faded');
       offerForm.classList.add('ad-form--disabled');
-      filterForm.reset();
+      // filterForm.reset();
       resetForm();
     },
     fillAddressField: function (x, y) {

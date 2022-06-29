@@ -93,7 +93,6 @@
     deactivate: function () {
       isPageActivated = true;
       window.form.deactivate();
-      // window.filtering.reset();
       window.filtering.deactivate();
       window.utils.setupStyleLeftTop(mainPin, locationParams.INITIAL_LEFT_POS, locationParams.INITIAL_TOP_POS);
       window.form.fillAddressField(Math.floor(parseInt(mainPin.style.left, 10) + 0.5 * mainPin.offsetWidth),
