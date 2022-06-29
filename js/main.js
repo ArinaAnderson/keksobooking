@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  var URL_GET = 'https://js.dump.academy/keksobooking/data';
+  var URL_GET = 'https://gvenya.github.io/keksby-data-new/pins-data.json';//'https://js.dump.academy/keksobooking/data';
   var locationParams = {
     MIN_LOCATION_Y: 130,
     MAX_LOCATION_Y: 630,
@@ -72,7 +72,7 @@
         map.classList.remove('map--faded');
         isPageActivated = false;
         */
-        fetch('https://gvenya.github.io/keksby-data-new/pins-data.json').then(response => response.json())
+        fetch(URL_GET).then(response => response.json())
         .then(function (data)  {
           loadedPins = data;
           window.pin.render(window.utils.shuffleArray(loadedPins));
