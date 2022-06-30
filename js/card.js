@@ -7,31 +7,24 @@
   var offerTypeEngToRus = {
     'flat': 'Квартира',
     'palace': 'Дворец',
-    'bungalo': 'Бунгало',
+    'villa': 'Villa',
     'house': 'Дом'
   };
 
   function defineGuestEnding(guests) {
-    var guestsNum = guests.toString();
-    if (guestsNum[guestsNum.length - 1] === '1' &&
-        guestsNum.substring(guestsNum.length - 2, guestsNum.length) !== '11') {
-      return 'гостя';
+    if (guests > 1) {
+      return 'guests';
     }
-    return 'гостей';
+    return 'guest';
   }
 
   function defineRoomEnding(rooms) {
-    var roomsNum = rooms.toString();
-    if (roomsNum[roomsNum.length - 1] === '1' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '11') {
-      return 'комната';
+    if (rooms > 1) {
+      return 'rooms';
     }
-    if (roomsNum[roomsNum.length - 1] === '2' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '12' ||
-        roomsNum[roomsNum.length - 1] === '3' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '13' ||
-        roomsNum[roomsNum.length - 1] === '4' && roomsNum.substring(roomsNum.length - 2, roomsNum.length) !== '14') {
-      return 'комнаты';
-    }
-    return 'комнат';
+    return 'room';
   }
+
 
   function addNewImage(src) {
     var image = document.createElement('img');
@@ -57,11 +50,11 @@
     var card = cardTemplate.cloneNode(true);
     card.querySelector('.popup__title').textContent = offerData.offer.title;
     card.querySelector('.popup__text--address').textContent = offerData.offer.address;
-    card.querySelector('.popup__text--price').textContent = offerData.offer.price + ' ₽/ночь';
-    card.querySelector('.popup__text--capacity').textContent = offerData.offer.rooms + ' ' + defineRoomEnding(offerData.offer.rooms) + ' для '
+    card.querySelector('.popup__text--price').textContent = offerData.offer.price + ' €/night';
+    card.querySelector('.popup__text--capacity').textContent = offerData.offer.rooms + ' ' + defineRoomEnding(offerData.offer.rooms) + ' for '
       + offerData.offer.guests + ' ' + defineGuestEnding(offerData.offer.guests);
-    card.querySelector('.popup__type').textContent = offerTypeEngToRus[offerData.offer.type];
-    card.querySelector('.popup__text--time').textContent = 'Заезд после ' + offerData.offer.checkin + ', выезд до ' + offerData.offer.checkout;
+    card.querySelector('.popup__type').textContent = offerData.offer.type;
+    card.querySelector('.popup__text--time').textContent = 'Checkin after ' + offerData.offer.checkin + ', checkout before ' + offerData.offer.checkout;
 
     var featuresFragment = document.createDocumentFragment();
     for (var i = 0; i < offerData.offer.features.length; i++) {
