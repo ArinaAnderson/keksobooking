@@ -27,13 +27,28 @@
 
   var priceValueToPriceRange = {
     'low': function (pin) {
-      return pin.offer.price < 10000;
+      return pin.offer.price < 100;
     },
     'middle': function (pin) {
-      return pin.offer.price >= 10000 && pin.offer.price <= 50000;
+      return pin.offer.price >= 100 && pin.offer.price <= 200;
     },
     'high': function (pin) {
-      return pin.offer.price > 50000;
+      return pin.offer.price > 200;
+    },
+    'any': function () {
+      return true;
+    }
+  };
+
+  var guestsValueToGuestsRange = {
+    'one': function (pin) {
+      return pin.offer.guests === 1;
+    },
+    'two': function (pin) {
+      return pin.offer.guests === 2;
+    },
+    'more than 2': function (pin) {
+      return pin.offer.guests > 2;
     },
     'any': function () {
       return true;
@@ -58,7 +73,8 @@
     filterPins: function (loadedData) {
       return loadedData.filter(function (pin) {
         return filterTypeRoomGuest(pin, typeSelect) && priceValueToPriceRange[priceSelect.value](pin) && filterTypeRoomGuest(pin, roomSelect)
-          && filterTypeRoomGuest(pin, guestSelect) && filterFeatures(pin);
+          // && filterTypeRoomGuest(pin, guestSelect) && filterFeatures(pin);
+          && guestsValueToGuestsRange[guestSelect.value](pin) && filterFeatures(pin);
       });
     },
     deactivate: function () {

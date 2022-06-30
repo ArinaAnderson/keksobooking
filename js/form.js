@@ -3,19 +3,17 @@
   var URL_POST = 'https://js.dump.academy/keksobooking';//'https://javascript.pages.academy/keksobooking/data/allow-cors';//'https://js.dump.academy/keksobooking/allow-cors';//'https://gvenya.github.io/keksby-data/data-JSN.json';//'https://js.dump.academy/keksobooking';
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var offerTypeToPrice = {
-    'bungalo': 0,
-    'flat': 1000,
-    'house': 5000,
-    'palace': 10000
+    'villa': 300,
+    'apartment': 100,
+    'house': 200,
   };
   var roomNumToGuestNum = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
-    '100': ['0']
   };
   var offerSelectNameToInitialValue = {
-    'type': 'flat',
+    'type': 'apartment',
     'timein': '12:00',
     'timeout': '12:00',
     'rooms': '1',
