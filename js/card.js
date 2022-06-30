@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  // https://arinaanderson.github.io/keksobooking-data-ENG/img/user01.jpg
+  var URL_GET = 'https://arinaanderson.github.io/keksobooking-data-ENG/';
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var map = document.querySelector('.map');
   var mapFilters = document.querySelector('.map__filters-container');
@@ -72,7 +74,7 @@
     }
     card.querySelector('.popup__photos').appendChild(photosFragment);
 
-    card.querySelector('.popup__avatar').src = offerData.author.avatar;
+    card.querySelector('.popup__avatar').src = `${URL_GET}img/${offerData.author.avatar}`;
 
     return card;
   }

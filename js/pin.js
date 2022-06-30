@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+  var URL_GET = 'https://arinaanderson.github.io/keksobooking-data-ENG/';
   var OFFERS_NUMBER = 5;
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPins = document.querySelector('.map__pins');
@@ -10,7 +11,7 @@
     var pin = pinTemplate.cloneNode(true);
     pin.style = 'left: ' + (offerData.location.x - mainPin.offsetWidth * 0.5) +
     'px; top: ' + (offerData.location.y - mainPin.offsetHeight) + 'px';
-    pin.querySelector('img').src = offerData.author.avatar;
+    pin.querySelector('img').src = `${URL_GET}img/${offerData.author.avatar}`;
     pin.querySelector('img').alt = offerData.offer.title;
     pin.addEventListener('click', function (evt) {
       activatePin(pin);
